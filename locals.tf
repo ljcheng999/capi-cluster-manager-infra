@@ -1,24 +1,23 @@
 locals {
   ### VPN configuration
-  vpc_upstream_name = "upstream_vpc"
-  vpc_upstream_cidr = "10.0.0.0/16"
-  eks_cidr          = "100.64.0.0/16"
+  vpc_upstream_name                         = "upstream_vpc"
+  vpc_upstream_cidr                         = "10.0.0.0/16"
+  eks_cidr                                  = "100.64.0.0/16"
 
   upstream_tags = {
-    organization    = "engineering"
-    group           = "platform"
-    team            = "enablement"
-    stack           = "cluster-manager"
-    email           = "test123@gmail.com"
-    application     = "cluster-manager-upstream"
-    automation_tool = "terraform"
+    organization                            = "engineering"
+    group                                   = "platform"
+    team                                    = "enablement"
+    stack                                   = "cluster-manager"
+    email                                   = "test123@gmail.com"
+    application                             = "cluster-manager-upstream"
+    automation_tool                         = "terraform"
   }
 
-
   #### EKS cluster manager
-  cluster_name = "cluster-manager"
-  cluster_name_underscore = "cluster_manager"
-  cluster_version = "1.31"
+  cluster_name                              = "cluster-manager"
+  cluster_name_underscore                   = "cluster_manager"
+  cluster_version                           = "1.31"
   cluster_addons = {
     coredns                = {}
     eks-pod-identity-agent = {}
@@ -26,8 +25,8 @@ locals {
     vpc-cni                = {}
   }
 
-  cluster_endpoint_public_access = true
-  cluster_endpoint_private_access = true
+  cluster_endpoint_public_access            = true
+  cluster_endpoint_private_access           = true
   cluster_endpoint_public_access_cidrs = [
     "73.14.227.55/32",
     # "142.136.0.0/16",
@@ -40,8 +39,10 @@ locals {
   cluster_iam_role_additional_policies = {
     "AmazonSSMManagedInstanceCore": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
+
   self_managed_node_groups = {}
   eks_managed_node_groups = {
+
     "${local.cluster_name_underscore}_${local.system_role_name}_node_pool" = {
 
       ami_type       = "AL2_x86_64"
@@ -84,8 +85,8 @@ locals {
         local.upstream_tags,
       )
     }
-    "${local.cluster_name_underscore}_${local.user_role_name}_node_pool" = {
 
+    "${local.cluster_name_underscore}_${local.user_role_name}_node_pool" = {
       ami_type       = "AL2_x86_64"
       instance_types = ["m5.large"]
       ### You need to find an AMI that has kubelet installed, the default AWS AMI does not
@@ -126,9 +127,9 @@ locals {
     }
   }
 
-  enable_cluster_creator_admin_permissions = true
-  create_aws_auth_configmap = false
-  manage_aws_auth_configmap = false
+  enable_cluster_creator_admin_permissions    = true
+  create_aws_auth_configmap                   = false
+  manage_aws_auth_configmap                   = false
 
   node_security_group_tags = merge(local.upstream_tags, {
     # NOTE - if creating multiple security groups with this module, only tag the
@@ -158,9 +159,19 @@ locals {
   # }
 
   ### Shared data
-  azs                   = slice(data.aws_availability_zones.available.names, 0, 2)
-  private_subnet_prefix = "priv-subnet"
-  local_subnet_prefix   = "intra-subnet"
-  system_role_name      = "system"
-  user_role_name      = "user"
+  azs                                         = slice(data.aws_availability_zones.available.names, 0, 2)
+  private_subnet_prefix                       = "priv-subnet"
+  local_subnet_prefix                         = "intra-subnet"
+  system_role_name                            = "system"
+  user_role_name                              = "user"
+
+  capi_ingress_alb_policy_name                = "capi-ingress-alb-policy"
+  capa_nodes_karpenter_controller_policy_name = "capa-nodes-karpenter-controller-policy"
+  capa_nodes_assume_policy                    = "capa-nodes-assume-policy"
+
+  system_node_group_name                      = "system-node-pool"
+  user_node_group_name                        = "user-node-pool"
+  eks_ingress_alb_policy_name                 = "capa-nodes-ingress-alb-policy"
+  capa_nodes_assume_policy_name               = "capa-nodes-assume-policy"
+  capa_nodes_karpender_controller_policy_name = "capa-nodes-karpenter-controller-policy"
 }
