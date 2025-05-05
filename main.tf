@@ -6,35 +6,6 @@ provider "aws" {
   # }
 }
 
-terraform {
-  backend "s3" {
-    
-  }
-}
-
-# ################################################################################
-# # Karpenter
-# ################################################################################
-
-# module "karpenter" {
-#   source = "../../modules/karpenter"
-
-#   cluster_name          = module.eks.cluster_name
-#   enable_v1_permissions = true
-
-#   # Name needs to match role name passed to the EC2NodeClass
-#   node_iam_role_use_name_prefix   = false
-#   node_iam_role_name              = local.name
-#   create_pod_identity_association = true
-
-#   # Used to attach additional IAM policies to the Karpenter node IAM role
-#   node_iam_role_additional_policies = {
-#     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-#   }
-
-#   tags = local.tags
-# }
-
 module "eks_upstream" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.36.0"
@@ -60,14 +31,6 @@ module "eks_upstream" {
   iam_role_additional_policies          = local.cluster_iam_role_additional_policies
   self_managed_node_groups              = local.self_managed_node_groups
   eks_managed_node_groups               = local.eks_managed_node_groups
-  
-
-  # create_aws_auth_configmap = local.create_aws_auth_configmap
-  # manage_aws_auth_configmap = local.manage_aws_auth_configmap
-
-  # aws_auth_roles            = var.aws_auth_roles
-  # aws_auth_users            = var.aws_auth_users
-  # aws_auth_accounts         = var.aws_auth_accounts
 
   cluster_security_group_additional_rules   = var.cluster_security_group_additional_rules
   # Cluster access entry
@@ -75,27 +38,6 @@ module "eks_upstream" {
   enable_cluster_creator_admin_permissions = local.enable_cluster_creator_admin_permissions
   access_entries = local.access_entries
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module "eks_upstream_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
@@ -157,7 +99,7 @@ module "eks_upstream_vpc" {
     },
     local.upstream_tags,
   )
-  # tags = local.upstream_tags
+  tags = local.upstream_tags
 }
 
 
