@@ -1,12 +1,12 @@
 
 resource "aws_iam_policy" "amazon_eks_ingress_alb_policy" {
-  name        = "${local.cluster_name}-${local.eks_ingress_alb_policy_name}"
-  description = "Policy for ${local.cluster_name} CAPI Cluster Alb policy"
+  name        = "${local.cluster_name}-${local.capi_ingress_elb_policy_name}"
+  description = "Policy for ${local.cluster_name} CAPI Cluster ELB policy"
   policy      = file("${path.module}/templates/aws/alb-iam-policy.json")
 
   tags = merge(
     {
-      "Name": "${local.cluster_name}-${local.eks_ingress_alb_policy_name}"
+      "Name": "${local.cluster_name}-${local.capi_ingress_elb_policy_name}"
     },
     local.upstream_tags,
   )

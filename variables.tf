@@ -33,13 +33,126 @@ variable "vpc_tags" {
   type        = map(string)
   default     = {}
 }
+variable "private_subnet_prefix" {
+  type        = string
+  default     = "priv-subnet"
+}
+variable "local_subnet_prefix" {
+  type        = string
+  default     = "intra-subnet"
+}
 
+################################################################################
+# EKS module variables
+################################################################################
 
+variable "default_iam_role_additional_policies" {
+  type        = map
+  default     = {
+    "AmazonEBSCSIDriverPolicy": "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+    "AmazonEKSVPCResourceController": "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController",
+    "AmazonSSMManagedInstanceCore": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+  }
+}
+variable "node_iam_role_additional_policies" {
+  type        = map
+  default     = {}
+}
+variable "default_cluster_iam_role_additional_policies" {
+  type        = map
+  default     = {
+    "AmazonSSMManagedInstanceCore": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  }
+}
+variable "cluster_iam_role_additional_policies" {
+  type        = map
+  default     = {}
+}
 
+variable "default_system_node_instance_types" {
+  type = list
+  default = ["m5.large"]
+}
+variable "default_user_node_instance_types" {
+  type = list
+  default = ["m5.large"]
+}
 
+variable "system_node_min_size" {
+  type        = number
+  default     = 1
+}
+variable "system_node_max_size" {
+  type        = number
+  default     = 3
+}
+variable "system_node_desire_size" {
+  type        = number
+  default     = 1
+}
+variable "user_node_min_size" {
+  type        = number
+  default     = 1
+}
+variable "user_node_max_size" {
+  type        = number
+  default     = 3
+}
+variable "user_node_desire_size" {
+  type        = number
+  default     = 1
+}
 
+variable "default_system_node_labels" {
+  type = map
+  default = {
+    "node-role.kubernetes.io/control-plane" = "true",
+    "karpenter.sh/controller" = "true"
+  }
+}
+variable "default_user_node_labels" {
+  type = map
+  default = {
+    "karpenter.sh/controller" = "true"
+  }
+}
+variable "system_node_labels" {
+  type = map
+  default = {}
+}
+variable "user_node_labels" {
+  type = map
+  default = {}
+}
 
-
+variable "system_node_group_name" {
+  type        = string
+  default     = "system-node-pool"
+}
+variable "system_role_name" {
+  type        = string
+  default     = "system"
+}
+variable "user_node_group_name" {
+  type        = string
+  default     = "user-node-pool"
+}
+variable "user_role_name" {
+  type        = string
+  default     = "user"
+}
+variable "capi_ingress_elb_policy_name" {
+  type        = string
+  default     = "capi-ingress-elb-policy"
+}
+variable "capa_nodes_karpenter_controller_policy_name" {
+  type        = string
+  default     = "capa-nodes-karpenter-controller-policy"
+}
+variable "capa_nodes_assume_policy" {
+  type        = string
+  default     = "capa-nodes-assume-policy"
+}
 
 
 
