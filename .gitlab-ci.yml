@@ -2,8 +2,8 @@ stages:
   - lint
   - validate
   - plan
-  - apply
-  - destroy
+  # - apply
+  # - destroy
 
 
 include:
