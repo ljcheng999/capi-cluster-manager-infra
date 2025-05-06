@@ -2,7 +2,7 @@ stages:
   - lint
   - validate
   - plan
-  # - apply
+  - apply
   # - destroy
 
 
