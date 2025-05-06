@@ -1,5 +1,5 @@
 provider "aws" {
-  # alias = "upstream"
+  alias = "upstream"
   region = "us-east-1"
   # assume_role {
   #   role_arn = var.assume_role_str
@@ -9,9 +9,9 @@ provider "aws" {
 module "eks_upstream" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.36.0"
-  # providers = {
-  #   aws = aws.upstream
-  # }
+  providers = {
+    aws = aws.upstream
+  }
 
   tags = local.upstream_tags
 
@@ -42,9 +42,9 @@ module "eks_upstream" {
 module "eks_upstream_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0"
-  # providers = {
-  #   aws = aws.upstream
-  # }
+  providers = {
+    aws = aws.upstream
+  }
 
   name = local.vpc_upstream_name
   cidr = local.vpc_upstream_cidr
