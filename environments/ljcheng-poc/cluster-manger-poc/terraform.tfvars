@@ -1,6 +1,6 @@
 
 
-cluster_name                              = "cluster-manager"
+cluster_name                              = "cluster-manager-poc"
 cluster_version                           = "1.31"
 
 
