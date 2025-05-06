@@ -8,6 +8,5 @@ stages:
 
 include:
   - project: 'jcheng-tech-919/cicd-templates'
-    file: 'terraform-provision.gitlab-ci.yml'
+    file: 'templates/terraform-provision.gitlab-ci.yml'
     ref: main
-
