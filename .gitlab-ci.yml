@@ -10,5 +10,3 @@ include:
   - project: 'jcheng-tech-919/cicd-templates'
     file: 'templates/terraform-provision.gitlab-ci.yml'
     ref: main
-
-    
