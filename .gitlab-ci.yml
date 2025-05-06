@@ -15,4 +15,3 @@ include:
   #   file: 'templates/terraform-provision.gitlab-ci.yml'
   #   ref: main
 
-
