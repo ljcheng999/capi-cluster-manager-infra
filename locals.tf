@@ -1,8 +1,8 @@
 locals {
   ### VPN configuration
-  vpc_upstream_name                         = "upstream_vpc"
-  vpc_upstream_cidr                         = "10.0.0.0/16"
-  eks_cidr                                  = "100.64.0.0/16"
+  vpc_upstream_name                         = var.vpc_upstream_name
+  vpc_upstream_cidr                         = var.vpc_upstream_cidr
+  eks_cidr                                  = var.eks_cidr
 
   upstream_tags = {
     organization                            = "engineering"
@@ -15,8 +15,8 @@ locals {
   }
 
   #### EKS cluster manager
-  cluster_name                              = "cluster-manager"
-  cluster_version                           = "1.31"
+  cluster_name                              = var.cluster_name
+  cluster_version                           = var.cluster_version
   cluster_addons = {
     coredns                = {}
     eks-pod-identity-agent = {}
@@ -24,16 +24,9 @@ locals {
     vpc-cni                = {}
   }
 
-  cluster_endpoint_public_access            = true
-  cluster_endpoint_private_access           = true
-  cluster_endpoint_public_access_cidrs = [
-    "73.14.227.55/32",
-    # "142.136.0.0/16",
-    # "107.22.62.130/32", #specflow-qa
-    # "3.213.73.41/32", #specflow-qa
-    # "3.224.130.80/32", #specflow-qa
-    # "3.218.88.57/32", #specflow-qa
-  ]
+  cluster_endpoint_public_access            = var.cluster_endpoint_public_access
+  cluster_endpoint_private_access           = var.cluster_endpoint_private_access
+  cluster_endpoint_public_access_cidrs      = var.cluster_endpoint_public_access_cidrs
 
   cluster_iam_role_additional_policies = merge(
     var.default_cluster_iam_role_additional_policies,
@@ -46,11 +39,9 @@ locals {
 
     "${local.cluster_name}_${local.system_node_group_name}" = {
 
-      ami_type       = "AL2_x86_64"
+      ami_type       = var.ami_type
+      ami_id         = var.ami_id
       instance_types = var.default_system_node_instance_types
-      ### You need to find an AMI that has kubelet installed, the default AWS AMI does not
-      ### Reference: https://stackoverflow.com/questions/64515585/aws-eks-nodegroup-create-failed-instances-failed-to-join-the-kubernetes-clust
-      ami_id         = "ami-0e92438dc9afbbde5"
 
       enable_bootstrap_user_data = true # instances join cluster from nodegroup
       subnet_ids = module.eks_upstream_vpc.intra_subnets
@@ -89,11 +80,9 @@ locals {
     }
 
     "${local.cluster_name}_${local.user_node_group_name}" = {
-      ami_type       = "AL2_x86_64"
-      instance_types = var.default_user_node_instance_types
-      ### You need to find an AMI that has kubelet installed, the default AWS AMI does not
-      ### Reference: https://stackoverflow.com/questions/64515585/aws-eks-nodegroup-create-failed-instances-failed-to-join-the-kubernetes-clust
-      ami_id         = "ami-0e92438dc9afbbde5"
+      ami_type       = var.ami_type
+      ami_id         = var.ami_id
+      instance_types = var.default_system_node_instance_types
 
       enable_bootstrap_user_data = true # instances join cluster from nodegroup
       subnet_ids = module.eks_upstream_vpc.intra_subnets

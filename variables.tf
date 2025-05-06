@@ -41,10 +41,52 @@ variable "local_subnet_prefix" {
   type        = string
   default     = "intra-subnet"
 }
+variable "eks_cidr" {
+  type        = string
+  default     = "100.64.0.0/16"
+}
+variable "vpc_upstream_cidr" {
+  type        = string
+  default     = "10.0.0.0/16"
+}
+variable "vpc_upstream_name" {
+  type        = string
+  default     = "upstream_vpc"
+}
 
 ################################################################################
 # EKS module variables
 ################################################################################
+
+variable "cluster_name" {
+  description = "Name of the EKS cluster"
+  type        = string
+  default     = ""
+}
+
+variable "cluster_version" {
+  description = "Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.27`)"
+  type        = string
+  default     = null
+}
+
+variable "cluster_endpoint_public_access_cidrs" {
+  description = "List of CIDR blocks which can access the Amazon EKS public API server endpoint"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
+variable "cluster_endpoint_private_access" {
+  description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled"
+  type        = bool
+  default     = true
+}
+
+variable "cluster_endpoint_public_access" {
+  description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled"
+  type        = bool
+  default     = false
+}
 
 variable "default_iam_role_additional_policies" {
   type        = map
@@ -154,34 +196,32 @@ variable "capa_nodes_assume_policy" {
   default     = "capa-nodes-assume-policy"
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-variable "cluster_name" {
-  description = "Name of the EKS cluster"
+variable "ami_id" {
   type        = string
   default     = ""
 }
-
-variable "cluster_version" {
-  description = "Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.27`)"
+variable "ami_type" {
   type        = string
-  default     = null
+  default     = "AL2_x86_64"
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ################################################################################
 # EKS Addons
