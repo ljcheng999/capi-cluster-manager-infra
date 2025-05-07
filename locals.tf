@@ -129,7 +129,7 @@ locals {
     "karpenter.sh/discovery" = local.cluster_name
   })
 
-  access_entries = {}
+  access_entries                              = local.access_entries
 
   ### Shared data
   azs                                         = slice(data.aws_availability_zones.available.names, 0, 2)

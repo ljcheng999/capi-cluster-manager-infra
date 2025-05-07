@@ -12,3 +12,22 @@ cluster_endpoint_public_access_cidrs = [
 ### Reference: https://stackoverflow.com/questions/64515585/aws-eks-nodegroup-create-failed-instances-failed-to-join-the-kubernetes-clust
 ami_id         = "ami-0e92438dc9afbbde5"
 ami_type       = "AL2_x86_64"
+
+access_entries = {
+# One access entry with a policy associated
+  sso_subadmin = {
+    principal_arn     = "arn:aws:iam::022985595394:user/ljcheng"
+    user_name         = "sso-admin"
+    kubernetes_groups = ["sso-admin-group"]
+
+    policy_associations = {
+      sso_subadmin_policy = {
+        policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+        access_scope = {
+          namespaces = []
+          type       = "cluster"
+        }
+      }
+    }
+  }
+}
