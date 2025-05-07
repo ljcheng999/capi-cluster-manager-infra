@@ -3,7 +3,7 @@
 cluster_name                              = "cluster-manager-poc"
 cluster_version                           = "1.31"
 
-
+cluster_endpoint_public_access = true
 cluster_endpoint_public_access_cidrs = [
   "73.14.227.55/32",
 ]
