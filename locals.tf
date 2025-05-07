@@ -9,7 +9,7 @@ locals {
     group                                   = "platform"
     team                                    = "enablement"
     stack                                   = "cluster-manager"
-    email                                   = "test123@gmail.com"
+    email                                   = "${var.custom_subdomain}.${var.custom_domain}"
     application                             = "cluster-manager-upstream"
     automation_tool                         = "terraform"
   }
@@ -26,7 +26,7 @@ locals {
 
   cluster_endpoint_public_access            = var.cluster_endpoint_public_access
   cluster_endpoint_private_access           = var.cluster_endpoint_private_access
-  cluster_endpoint_public_access_cidrs      = var.cluster_endpoint_public_access_cidrs
+  cluster_endpoint_public_access_cidrs      = flatten(["${var.my_ip}", var.cluster_endpoint_public_access_cidrs])
 
   cluster_iam_role_additional_policies = merge(
     var.default_cluster_iam_role_additional_policies,
@@ -37,7 +37,7 @@ locals {
 
   eks_managed_node_groups = {
 
-    "${local.cluster_name}_${local.system_node_group_name}" = {
+    "${local.cluster_name}-${local.system_node_group_name}" = {
 
       ami_type       = var.ami_type
       ami_id         = var.ami_id
@@ -67,7 +67,7 @@ locals {
         var.default_system_node_labels,
         var.system_node_labels,
         {
-          "ljcheng.toolbox.com/${local.system_role_name}-node-role" = "${local.system_role_name}"
+          "${var.custom_subdomain}.${var.custom_domain}/${local.system_role_name}-node-role" = "${local.system_role_name}"
         },
       )
 
@@ -79,7 +79,7 @@ locals {
       )
     }
 
-    "${local.cluster_name}_${local.user_node_group_name}" = {
+    "${local.cluster_name}-${local.user_node_group_name}" = {
       ami_type       = var.ami_type
       ami_id         = var.ami_id
       instance_types = var.default_system_node_instance_types
@@ -118,7 +118,7 @@ locals {
     }
   }
 
-  enable_cluster_creator_admin_permissions    = true
+  enable_cluster_creator_admin_permissions    = var.enable_cluster_creator_admin_permissions
   create_aws_auth_configmap                   = false
   manage_aws_auth_configmap                   = false
 
@@ -129,7 +129,26 @@ locals {
     "karpenter.sh/discovery" = local.cluster_name
   })
 
-  access_entries                              = local.access_entries
+  access_entries                              = merge(
+    var.additional_access_entries,
+    {
+      sso_subadmin = {
+        principal_arn     = var.cluster_admin_arn # Ideally, this should be role arn
+        user_name         = "sso-admin"
+        kubernetes_groups = ["sso-admin-group"]
+
+        policy_associations = {
+          sso_subadmin_policy = {
+            policy_arn = var.cluster_admin_access_policy
+            access_scope = {
+              namespaces = []
+              type       = "cluster"
+            }
+          }
+        }
+      }
+    }
+  )
 
   ### Shared data
   azs                                         = slice(data.aws_availability_zones.available.names, 0, 2)

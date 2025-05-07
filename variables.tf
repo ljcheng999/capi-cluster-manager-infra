@@ -73,7 +73,7 @@ variable "cluster_version" {
 variable "cluster_endpoint_public_access_cidrs" {
   description = "List of CIDR blocks which can access the Amazon EKS public API server endpoint"
   type        = list(string)
-  default     = ["0.0.0.0/0"]
+  default     = []
 }
 
 variable "cluster_endpoint_private_access" {
@@ -96,6 +96,20 @@ variable "default_iam_role_additional_policies" {
     "AmazonSSMManagedInstanceCore": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
   }
 }
+variable "my_ip" {
+  type        = string
+  default     = ""
+}
+
+variable "custom_domain" {
+  type        = string
+  default     = "kubesources.com"
+} 
+variable "custom_subdomain" {
+  type        = string
+  default     = "ljcheng"
+} 
+
 variable "node_iam_role_additional_policies" {
   type        = map
   default     = {}
@@ -205,22 +219,31 @@ variable "ami_type" {
   default     = "AL2_x86_64"
 }
 
+################################################################################
+# Access Entry
+################################################################################
 
+variable "cluster_admin_arn" {
+  description = "ARN of admin user/role to add to the cluster"
+  type        = string
+  default     = ""
+}
+variable "cluster_admin_access_policy" {
+  description = "ARN of admin user/role policy to add to the cluster"
+  type        = string
+  default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+}
+variable "additional_access_entries" {
+  description = "Map of access entries to add to the cluster"
+  type        = any
+  default     = {}
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+variable "enable_cluster_creator_admin_permissions" {
+  description = "Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry"
+  type        = bool
+  default     = false
+}
 
 
 ################################################################################
