@@ -24,6 +24,10 @@ locals {
     vpc-cni                = {}
   }
 
+  public_subnets                            = [for k, v in local.azs : cidrsubnet(local.vpc_upstream_cidr, 8, k)]
+  private_subnets                           = [for k, v in local.azs : cidrsubnet(local.vpc_upstream_cidr, 8, k + length(local.azs) + 1)]
+  intra_subnets                             = [for k, v in local.azs : cidrsubnet(local.eks_cidr, 1, k)]
+
   cluster_endpoint_public_access            = var.cluster_endpoint_public_access
   cluster_endpoint_private_access           = var.cluster_endpoint_private_access
   cluster_endpoint_public_access_cidrs      = flatten(["${var.my_ip}", var.cluster_endpoint_public_access_cidrs])
