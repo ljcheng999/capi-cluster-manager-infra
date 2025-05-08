@@ -35,11 +35,11 @@ variable "vpc_tags" {
 }
 variable "private_subnet_prefix" {
   type        = string
-  default     = "priv-subnet"
+  default     = "private-us-east"
 }
 variable "local_subnet_prefix" {
   type        = string
-  default     = "intra-subnet"
+  default     = "intra-us-east"
 }
 variable "eks_cidr" {
   type        = string

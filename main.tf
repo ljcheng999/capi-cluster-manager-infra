@@ -1,6 +1,6 @@
 provider "aws" {
   alias = "upstream"
-  region = "us-east-1"
+  region = var.default_region
   # assume_role {
   #   role_arn = var.assume_role_str
   # }
@@ -53,7 +53,6 @@ module "eks_upstream_vpc" {
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
 
   public_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_upstream_cidr, 8, k)]
-
   private_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_upstream_cidr, 8, k + length(local.azs) + 1)]
   intra_subnets    = [for k, v in local.azs : cidrsubnet(local.eks_cidr, 1, k)]
 
