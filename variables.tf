@@ -228,7 +228,12 @@ variable "cluster_admin_user_arn" {
   type        = string
   default     = ""
 }
-variable "cluster_admin_user_access_policy_arn" {
+variable "cluster_admin_role_arn" {
+  description = "Admin role Map of access entries to add to the cluster"
+  type        = string
+  default     = ""
+}
+variable "aws_eks_cluster_admin_policy" {
   description = "ARN of admin user/role policy to add to the cluster"
   type        = string
   default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
@@ -238,12 +243,6 @@ variable "additional_access_entries" {
   type        = any
   default     = {}
 }
-variable "cluster_admin_role_arn" {
-  description = "Admin role Map of access entries to add to the cluster"
-  type        = string
-  default     = ""
-}
-
 variable "enable_cluster_creator_admin_permissions" {
   description = "Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry"
   type        = bool

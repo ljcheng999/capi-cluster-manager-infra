@@ -151,7 +151,7 @@ locals {
 
         policy_associations = {
           sso_subadmin_policy = {
-            policy_arn = var.cluster_admin_user_access_policy_arn
+            policy_arn = var.aws_eks_cluster_admin_policy
             access_scope = {
               namespaces = []
               type       = "cluster"
@@ -168,7 +168,7 @@ locals {
 
         policy_associations = {
           sso_subadmin_policy = {
-            policy_arn = var.cluster_admin_user_access_policy_arn
+            policy_arn = var.aws_eks_cluster_admin_policy
             access_scope = {
               namespaces = []
               type       = "cluster"
