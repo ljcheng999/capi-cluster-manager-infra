@@ -67,6 +67,14 @@ locals {
         var.node_iam_role_additional_policies
       )
 
+      taints = [
+        {
+          key    = "node-role.kubernetes.io/control-plane"
+          value  = "true"
+          effect = "NO_SCHEDULE"
+        }
+      ] 
+
       labels = merge(
         var.default_system_node_labels,
         var.system_node_labels,
@@ -135,15 +143,15 @@ locals {
 
   access_entries                              = merge(
     var.additional_access_entries,
-    {
+    var.cluster_admin_user_arn != "" ? {
       sso_subadmin = {
-        principal_arn     = var.cluster_admin_arn # Ideally, this should be role arn
+        principal_arn     = var.cluster_admin_user_arn # Ideally, this should be role arn
         user_name         = "sso-admin"
         kubernetes_groups = ["sso-admin-group"]
 
         policy_associations = {
           sso_subadmin_policy = {
-            policy_arn = var.cluster_admin_access_policy
+            policy_arn = var.cluster_admin_user_access_policy_arn
             access_scope = {
               namespaces = []
               type       = "cluster"
@@ -151,7 +159,24 @@ locals {
           }
         }
       }
-    }
+    } : {},
+    var.cluster_admin_role_arn != "" ? {
+      sso_subadmin = {
+        principal_arn     = var.cluster_admin_role_arn # Ideally, this should be role arn
+        user_name         = "sso-admin"
+        kubernetes_groups = ["sso-admin-group"]
+
+        policy_associations = {
+          sso_subadmin_policy = {
+            policy_arn = var.cluster_admin_user_access_policy_arn
+            access_scope = {
+              namespaces = []
+              type       = "cluster"
+            }
+          }
+        }
+      }
+    } : {}
   )
 
   ### Shared data

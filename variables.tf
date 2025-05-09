@@ -223,12 +223,12 @@ variable "ami_type" {
 # Access Entry
 ################################################################################
 
-variable "cluster_admin_arn" {
+variable "cluster_admin_user_arn" {
   description = "ARN of admin user/role to add to the cluster"
   type        = string
   default     = ""
 }
-variable "cluster_admin_access_policy" {
+variable "cluster_admin_user_access_policy_arn" {
   description = "ARN of admin user/role policy to add to the cluster"
   type        = string
   default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
@@ -237,6 +237,11 @@ variable "additional_access_entries" {
   description = "Map of access entries to add to the cluster"
   type        = any
   default     = {}
+}
+variable "cluster_admin_role_arn" {
+  description = "Admin role Map of access entries to add to the cluster"
+  type        = string
+  default     = ""
 }
 
 variable "enable_cluster_creator_admin_permissions" {
