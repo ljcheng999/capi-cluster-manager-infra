@@ -238,7 +238,7 @@ variable "aws_eks_cluster_admin_policy" {
   type        = string
   default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 }
-variable "additional_access_entries" {
+variable "default_access_entries" {
   description = "Map of access entries to add to the cluster"
   type        = any
   default     = {}

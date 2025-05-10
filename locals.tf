@@ -31,6 +31,7 @@ locals {
   cluster_endpoint_public_access            = var.cluster_endpoint_public_access
   cluster_endpoint_private_access           = var.cluster_endpoint_private_access
   cluster_endpoint_public_access_cidrs      = flatten(["${var.my_ip}", var.cluster_endpoint_public_access_cidrs])
+  cluster_security_group_additional_rules   = var.cluster_security_group_additional_rules
 
   cluster_iam_role_additional_policies = merge(
     var.default_cluster_iam_role_additional_policies,
@@ -130,7 +131,6 @@ locals {
     }
   }
 
-  enable_cluster_creator_admin_permissions    = var.enable_cluster_creator_admin_permissions
   create_aws_auth_configmap                   = false
   manage_aws_auth_configmap                   = false
 
@@ -141,43 +141,26 @@ locals {
     "karpenter.sh/discovery" = local.cluster_name
   })
 
-  access_entries                              = merge(
-    var.additional_access_entries,
-    var.cluster_admin_user_arn != "" ? {
-      sso_subadmin = {
-        principal_arn     = var.cluster_admin_user_arn # Ideally, this should be role arn
-        user_name         = "sso-admin"
-        kubernetes_groups = ["sso-admin-group"]
+  ### Because the runner role can be assume, so we can use this for a new access entry for eks
+  # enable_cluster_creator_admin_permissions = var.cluster_admin_role_arn != "" ? true : false
+  enable_cluster_creator_admin_permissions = var.cluster_admin_user_arn != "" ? true : false
+  access_entries = var.cluster_admin_role_arn != "" ? {
+    sso_subadmin = {
+      principal_arn     = var.cluster_admin_role_arn # Ideally, this should be role arn
+      user_name         = "sso-admin"
+      kubernetes_groups = ["sso-admin-group"]
 
-        policy_associations = {
-          sso_subadmin_policy = {
-            policy_arn = var.aws_eks_cluster_admin_policy
-            access_scope = {
-              namespaces = []
-              type       = "cluster"
-            }
+      policy_associations = {
+        sso_subadmin_policy = {
+          policy_arn = var.aws_eks_cluster_admin_policy
+          access_scope = {
+            namespaces = []
+            type       = "cluster"
           }
         }
       }
-    } : {},
-    var.cluster_admin_role_arn != "" ? {
-      sso_subadmin = {
-        principal_arn     = var.cluster_admin_role_arn # Ideally, this should be role arn
-        user_name         = "sso-admin"
-        kubernetes_groups = ["sso-admin-group"]
-
-        policy_associations = {
-          sso_subadmin_policy = {
-            policy_arn = var.aws_eks_cluster_admin_policy
-            access_scope = {
-              namespaces = []
-              type       = "cluster"
-            }
-          }
-        }
-      }
-    } : {}
-  )
+    }
+  } : var.default_access_entries
 
   ### Shared data
   azs                                         = slice(data.aws_availability_zones.available.names, 0, 2)

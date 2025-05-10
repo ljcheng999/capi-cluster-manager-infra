@@ -32,7 +32,7 @@ module "eks_upstream" {
   self_managed_node_groups                  = local.self_managed_node_groups
   eks_managed_node_groups                   = local.eks_managed_node_groups
 
-  cluster_security_group_additional_rules   = var.cluster_security_group_additional_rules
+  cluster_security_group_additional_rules   = local.cluster_security_group_additional_rules
   # Cluster access entry
   # To add the current caller identity as an administrator
   enable_cluster_creator_admin_permissions  = local.enable_cluster_creator_admin_permissions
