@@ -106,6 +106,9 @@ module "eks_upstream_vpc" {
 }
 
 
+output "resources_eks" {
+  value = module.eks_upstream
+}
 output "resources_east_vpc" {
   value = module.eks_upstream_vpc
 }
