@@ -73,6 +73,11 @@ locals {
           key    = "node-role.kubernetes.io/control-plane"
           value  = "true"
           effect = "NO_SCHEDULE"
+        },
+        {
+          key    = "${var.cluster_name}.${var.custom_domain}/node-role"
+          value  = "${local.system_role_name}"
+          effect = "NO_SCHEDULE"
         }
       ] 
 
@@ -80,7 +85,7 @@ locals {
         var.default_system_node_labels,
         var.system_node_labels,
         {
-          "${var.custom_subdomain}.${var.custom_domain}/${local.system_role_name}-node-role" = "${local.system_role_name}"
+          "${var.cluster_name}.${var.custom_domain}/node-role" = "${local.system_role_name}"
         },
       )
 
