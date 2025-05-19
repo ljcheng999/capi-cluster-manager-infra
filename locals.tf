@@ -1,22 +1,22 @@
 locals {
   ### VPN configuration
-  vpc_upstream_name                         = var.vpc_upstream_name
-  vpc_upstream_cidr                         = var.vpc_upstream_cidr
-  eks_cidr                                  = var.eks_cidr
+  vpc_upstream_name = var.vpc_upstream_name
+  vpc_upstream_cidr = var.vpc_upstream_cidr
+  eks_cidr          = var.eks_cidr
 
   upstream_tags = {
-    organization                            = "engineering"
-    group                                   = "platform"
-    team                                    = "enablement"
-    stack                                   = "cluster-manager"
-    email                                   = "${var.custom_subdomain}.${var.custom_domain}"
-    application                             = "cluster-manager-upstream"
-    automation_tool                         = "terraform"
+    organization    = "engineering"
+    group           = "platform"
+    team            = "enablement"
+    stack           = "cluster-manager"
+    email           = "${var.custom_subdomain}.${var.custom_domain}"
+    application     = "cluster-manager-upstream"
+    automation_tool = "terraform"
   }
 
   #### EKS cluster manager
-  cluster_name                              = var.cluster_name
-  cluster_version                           = var.cluster_version
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
   cluster_addons = {
     coredns                = {}
     eks-pod-identity-agent = {}
@@ -24,14 +24,14 @@ locals {
     vpc-cni                = {}
   }
 
-  public_subnets                            = [for k, v in local.azs : cidrsubnet(local.vpc_upstream_cidr, 8, k)]
-  private_subnets                           = [for k, v in local.azs : cidrsubnet(local.vpc_upstream_cidr, 8, k + length(local.azs) + 1)]
-  intra_subnets                             = [for k, v in local.azs : cidrsubnet(local.eks_cidr, 1, k)]
+  public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_upstream_cidr, 8, k)]
+  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_upstream_cidr, 8, k + length(local.azs) + 1)]
+  intra_subnets   = [for k, v in local.azs : cidrsubnet(local.eks_cidr, 1, k)]
 
-  cluster_endpoint_public_access            = var.cluster_endpoint_public_access
-  cluster_endpoint_private_access           = var.cluster_endpoint_private_access
-  cluster_endpoint_public_access_cidrs      = flatten(["${var.my_ip}", var.cluster_endpoint_public_access_cidrs])
-  cluster_security_group_additional_rules   = var.cluster_security_group_additional_rules
+  cluster_endpoint_public_access          = var.cluster_endpoint_public_access
+  cluster_endpoint_private_access         = var.cluster_endpoint_private_access
+  cluster_endpoint_public_access_cidrs    = flatten(["${var.my_ip}", var.cluster_endpoint_public_access_cidrs])
+  cluster_security_group_additional_rules = var.cluster_security_group_additional_rules
 
   cluster_iam_role_additional_policies = merge(
     var.default_cluster_iam_role_additional_policies,
@@ -49,7 +49,7 @@ locals {
       instance_types = var.default_system_node_instance_types
 
       enable_bootstrap_user_data = true # instances join cluster from nodegroup
-      subnet_ids = module.eks_upstream_vpc.intra_subnets
+      subnet_ids                 = module.eks_upstream_vpc.intra_subnets
 
       update_config = {
         max_unavailable = 1
@@ -61,7 +61,7 @@ locals {
       # https://github.com/bryantbiggs/eks-desired-size-hack
       desired_size = var.system_node_desire_size
 
-      iam_role_name = "${local.cluster_name}-${local.system_node_group_name}"
+      iam_role_name            = "${local.cluster_name}-${local.system_node_group_name}"
       iam_role_use_name_prefix = false
       iam_role_additional_policies = merge(
         var.default_iam_role_additional_policies,
@@ -75,11 +75,11 @@ locals {
           effect = "NO_SCHEDULE"
         },
         {
-          key    = "${var.cluster_name}.${var.custom_domain}/node-role"
+          key    = "node.${var.custom_domain}/role"
           value  = "${local.system_role_name}"
           effect = "NO_SCHEDULE"
         }
-      ] 
+      ]
 
       labels = merge(
         var.default_system_node_labels,
@@ -91,7 +91,7 @@ locals {
 
       tags = merge(
         {
-          "kubernetes.io/cluster/${local.cluster_name}": "owned"
+          "kubernetes.io/cluster/${local.cluster_name}" : "owned"
         },
         local.upstream_tags,
       )
@@ -103,7 +103,7 @@ locals {
       instance_types = var.default_system_node_instance_types
 
       enable_bootstrap_user_data = true # instances join cluster from nodegroup
-      subnet_ids = module.eks_upstream_vpc.intra_subnets
+      subnet_ids                 = module.eks_upstream_vpc.intra_subnets
 
       update_config = {
         max_unavailable = 1
@@ -115,7 +115,7 @@ locals {
       # https://github.com/bryantbiggs/eks-desired-size-hack
       desired_size = var.user_node_desire_size
 
-      iam_role_name = "${local.cluster_name}-${local.user_node_group_name}"
+      iam_role_name            = "${local.cluster_name}-${local.user_node_group_name}"
       iam_role_use_name_prefix = false
       iam_role_additional_policies = merge(
         var.default_iam_role_additional_policies,
@@ -129,15 +129,15 @@ locals {
 
       tags = merge(
         {
-          "kubernetes.io/cluster/${local.cluster_name}": "owned"
+          "kubernetes.io/cluster/${local.cluster_name}" : "owned"
         },
         local.upstream_tags,
       )
     }
   }
 
-  create_aws_auth_configmap                   = false
-  manage_aws_auth_configmap                   = false
+  create_aws_auth_configmap = false
+  manage_aws_auth_configmap = false
 
   node_security_group_tags = merge(local.upstream_tags, {
     # NOTE - if creating multiple security groups with this module, only tag the
@@ -168,11 +168,11 @@ locals {
   } : var.default_access_entries
 
   ### Shared data
-  azs                                         = slice(data.aws_availability_zones.available.names, 0, 2)
-  private_subnet_prefix                       = var.private_subnet_prefix
-  local_subnet_prefix                         = var.local_subnet_prefix
-  system_role_name                            = var.system_role_name
-  user_role_name                              = var.user_role_name
+  azs                   = slice(data.aws_availability_zones.available.names, 0, 2)
+  private_subnet_prefix = var.private_subnet_prefix
+  local_subnet_prefix   = var.local_subnet_prefix
+  system_role_name      = var.system_role_name
+  user_role_name        = var.user_role_name
 
   capi_ingress_elb_policy_name                = var.capi_ingress_elb_policy_name
   capa_nodes_karpenter_controller_policy_name = var.capa_nodes_karpenter_controller_policy_name
