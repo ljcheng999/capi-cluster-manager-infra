@@ -70,11 +70,6 @@ locals {
 
       taints = [
         {
-          key    = "node-role.kubernetes.io/control-plane"
-          value  = "true"
-          effect = "NO_SCHEDULE"
-        },
-        {
           key    = "node.${var.custom_domain}/role"
           value  = "${local.system_role_name}"
           effect = "NO_SCHEDULE"
