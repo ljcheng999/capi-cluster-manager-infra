@@ -14,24 +14,11 @@ locals {
     automation_tool = "terraform"
   }
 
-  #### EKS cluster manager
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-  cluster_addons = {
-    coredns                = {}
-    eks-pod-identity-agent = {}
-    kube-proxy             = {}
-    vpc-cni                = {}
-  }
 
   public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_upstream_cidr, 8, k)]
   private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_upstream_cidr, 8, k + length(local.azs) + 1)]
   intra_subnets   = [for k, v in local.azs : cidrsubnet(local.eks_cidr, 1, k)]
 
-  cluster_endpoint_public_access          = var.cluster_endpoint_public_access
-  cluster_endpoint_private_access         = var.cluster_endpoint_private_access
-  cluster_endpoint_public_access_cidrs    = flatten(["${var.my_ip}", var.cluster_endpoint_public_access_cidrs])
-  cluster_security_group_additional_rules = var.cluster_security_group_additional_rules
 
   cluster_iam_role_additional_policies = merge(
     var.default_cluster_iam_role_additional_policies,
@@ -42,7 +29,7 @@ locals {
 
   eks_managed_node_groups = {
 
-    "${local.cluster_name}-${local.system_node_group_name}" = {
+    "${var.cluster_name}-${var.system_node_group_name}" = {
 
       ami_type       = var.ami_type
       ami_id         = var.ami_id
@@ -61,7 +48,7 @@ locals {
       # https://github.com/bryantbiggs/eks-desired-size-hack
       desired_size = var.system_node_desire_size
 
-      iam_role_name            = "${local.cluster_name}-${local.system_node_group_name}"
+      iam_role_name            = "${var.cluster_name}-${var.system_node_group_name}"
       iam_role_use_name_prefix = false
       iam_role_additional_policies = merge(
         var.default_iam_role_additional_policies,
@@ -71,7 +58,7 @@ locals {
       taints = [
         {
           key    = "node.${var.custom_domain}/role"
-          value  = "${local.system_role_name}"
+          value  = "${var.system_role_name}"
           effect = "NO_SCHEDULE"
         }
       ]
@@ -80,19 +67,19 @@ locals {
         var.default_system_node_labels,
         var.system_node_labels,
         {
-          "${var.cluster_name}.${var.custom_domain}/node-role" = "${local.system_role_name}"
+          "${var.cluster_name}.${var.custom_domain}/node-role" = "${var.system_role_name}"
         },
       )
 
       tags = merge(
         {
-          "kubernetes.io/cluster/${local.cluster_name}" : "owned"
+          "kubernetes.io/cluster/${var.cluster_name}" : "owned"
         },
         local.upstream_tags,
       )
     }
 
-    "${local.cluster_name}-${local.user_node_group_name}" = {
+    "${var.cluster_name}-${var.user_node_group_name}" = {
       ami_type       = var.ami_type
       ami_id         = var.ami_id
       instance_types = var.default_system_node_instance_types
@@ -110,7 +97,7 @@ locals {
       # https://github.com/bryantbiggs/eks-desired-size-hack
       desired_size = var.user_node_desire_size
 
-      iam_role_name            = "${local.cluster_name}-${local.user_node_group_name}"
+      iam_role_name            = "${var.cluster_name}-${var.user_node_group_name}"
       iam_role_use_name_prefix = false
       iam_role_additional_policies = merge(
         var.default_iam_role_additional_policies,
@@ -124,7 +111,7 @@ locals {
 
       tags = merge(
         {
-          "kubernetes.io/cluster/${local.cluster_name}" : "owned"
+          "kubernetes.io/cluster/${var.cluster_name}" : "owned"
         },
         local.upstream_tags,
       )
@@ -138,7 +125,7 @@ locals {
     # NOTE - if creating multiple security groups with this module, only tag the
     # security group that Karpenter should utilize with the following tag
     # (i.e. - at most, only one security group should have this tag in your account)
-    "karpenter.sh/discovery" = local.cluster_name
+    "karpenter.sh/discovery" = var.cluster_name
   })
 
   ### Because the runner role can be assume, so we can use this for a new access entry for eks
@@ -166,16 +153,4 @@ locals {
   azs                   = slice(data.aws_availability_zones.available.names, 0, 2)
   private_subnet_prefix = var.private_subnet_prefix
   local_subnet_prefix   = var.local_subnet_prefix
-  system_role_name      = var.system_role_name
-  user_role_name        = var.user_role_name
-
-  capi_ingress_elb_policy_name                = var.capi_ingress_elb_policy_name
-  capa_nodes_karpenter_controller_policy_name = var.capa_nodes_karpenter_controller_policy_name
-  capa_nodes_assume_policy                    = var.capa_nodes_assume_policy
-
-  system_node_group_name                      = var.system_node_group_name
-  user_node_group_name                        = var.user_node_group_name
-  eks_ingress_alb_policy_name                 = var.capi_ingress_elb_policy_name
-  capa_nodes_assume_policy_name               = var.capa_nodes_assume_policy
-  capa_nodes_karpender_controller_policy_name = var.capa_nodes_karpenter_controller_policy_name
 }

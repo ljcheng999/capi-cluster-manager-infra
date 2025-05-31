@@ -34,24 +34,24 @@ variable "vpc_tags" {
   default     = {}
 }
 variable "private_subnet_prefix" {
-  type        = string
-  default     = "private-us-east"
+  type    = string
+  default = "private-us-east"
 }
 variable "local_subnet_prefix" {
-  type        = string
-  default     = "intra-us-east"
+  type    = string
+  default = "intra-us-east"
 }
 variable "eks_cidr" {
-  type        = string
-  default     = "100.64.0.0/16"
+  type    = string
+  default = "100.64.0.0/16"
 }
 variable "vpc_upstream_cidr" {
-  type        = string
-  default     = "10.0.0.0/16"
+  type    = string
+  default = "10.0.0.0/16"
 }
 variable "vpc_upstream_name" {
-  type        = string
-  default     = "upstream_vpc"
+  type    = string
+  default = "upstream_vpc"
 }
 
 ################################################################################
@@ -89,134 +89,134 @@ variable "cluster_endpoint_public_access" {
 }
 
 variable "default_iam_role_additional_policies" {
-  type        = map
-  default     = {
-    "AmazonEBSCSIDriverPolicy": "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
-    "AmazonEKSVPCResourceController": "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController",
-    "AmazonSSMManagedInstanceCore": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+  type = map(any)
+  default = {
+    "AmazonEBSCSIDriverPolicy" : "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+    "AmazonEKSVPCResourceController" : "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController",
+    "AmazonSSMManagedInstanceCore" : "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
   }
 }
 variable "my_ip" {
-  type        = string
-  default     = ""
+  type    = string
+  default = ""
 }
 
 variable "custom_domain" {
-  type        = string
-  default     = "kubesources.com"
-} 
+  type    = string
+  default = "kubesources.com"
+}
 variable "custom_subdomain" {
-  type        = string
-  default     = "ljcheng"
-} 
+  type    = string
+  default = "ljcheng"
+}
 
 variable "node_iam_role_additional_policies" {
-  type        = map
-  default     = {}
+  type    = map(any)
+  default = {}
 }
 variable "default_cluster_iam_role_additional_policies" {
-  type        = map
-  default     = {
-    "AmazonSSMManagedInstanceCore": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  type = map(any)
+  default = {
+    "AmazonSSMManagedInstanceCore" : "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
 }
 variable "cluster_iam_role_additional_policies" {
-  type        = map
-  default     = {}
+  type    = map(any)
+  default = {}
 }
 
 variable "default_system_node_instance_types" {
-  type = list
+  type    = list(any)
   default = ["m5.large"]
 }
 variable "default_user_node_instance_types" {
-  type = list
+  type    = list(any)
   default = ["m5.large"]
 }
 
 variable "system_node_min_size" {
-  type        = number
-  default     = 1
+  type    = number
+  default = 1
 }
 variable "system_node_max_size" {
-  type        = number
-  default     = 3
+  type    = number
+  default = 2
 }
 variable "system_node_desire_size" {
-  type        = number
-  default     = 1
+  type    = number
+  default = 1
 }
 variable "user_node_min_size" {
-  type        = number
-  default     = 1
+  type    = number
+  default = 1
 }
 variable "user_node_max_size" {
-  type        = number
-  default     = 3
+  type    = number
+  default = 2
 }
 variable "user_node_desire_size" {
-  type        = number
-  default     = 1
+  type    = number
+  default = 1
 }
 
 variable "default_system_node_labels" {
-  type = map
+  type = map(any)
   default = {
     "node-role.kubernetes.io/control-plane" = "true",
-    "karpenter.sh/controller" = "true"
+    "karpenter.sh/controller"               = "true"
   }
 }
 variable "default_user_node_labels" {
-  type = map
+  type = map(any)
   default = {
     "karpenter.sh/controller" = "true"
   }
 }
 variable "system_node_labels" {
-  type = map
+  type    = map(any)
   default = {}
 }
 variable "user_node_labels" {
-  type = map
+  type    = map(any)
   default = {}
 }
 
 variable "system_node_group_name" {
-  type        = string
-  default     = "system-node-pool"
+  type    = string
+  default = "system-node-pool"
 }
 variable "system_role_name" {
-  type        = string
-  default     = "system"
+  type    = string
+  default = "system"
 }
 variable "user_node_group_name" {
-  type        = string
-  default     = "user-node-pool"
+  type    = string
+  default = "user-node-pool"
 }
 variable "user_role_name" {
-  type        = string
-  default     = "user"
+  type    = string
+  default = "user"
 }
 variable "capi_ingress_elb_policy_name" {
-  type        = string
-  default     = "capi-ingress-elb-policy"
+  type    = string
+  default = "capi-ingress-elb-policy"
 }
 variable "capa_nodes_karpenter_controller_policy_name" {
-  type        = string
-  default     = "capa-nodes-karpenter-controller-policy"
+  type    = string
+  default = "capa-nodes-karpenter-controller-policy"
 }
 variable "capa_nodes_assume_policy" {
-  type        = string
-  default     = "capa-nodes-assume-policy"
+  type    = string
+  default = "capa-nodes-assume-policy"
 }
 
 variable "ami_id" {
-  type        = string
-  default     = ""
+  type    = string
+  default = ""
 }
 variable "ami_type" {
-  type        = string
-  default     = "AL2_x86_64"
+  type    = string
+  default = "AL2_x86_64"
 }
 
 ################################################################################
@@ -256,7 +256,12 @@ variable "enable_cluster_creator_admin_permissions" {
 variable "cluster_addons" {
   description = "Map of cluster addon configurations to enable for the cluster. Addon name can be the map keys or set with `name`"
   type        = any
-  default     = {}
+  default = {
+    coredns                = {}
+    eks-pod-identity-agent = {}
+    kube-proxy             = {}
+    vpc-cni                = {}
+  }
 }
 
 ################################################################################

@@ -1,7 +1,22 @@
 
 
 cluster_name    = "capi-cm-poc"
-cluster_version = "1.32"
+cluster_version = "1.33"
+
+### You need to find an AMI that has kubelet installed, the default AWS AMI does not
+### Reference: https://stackoverflow.com/questions/64515585/aws-eks-nodegroup-create-failed-instances-failed-to-join-the-kubernetes-clust
+ami_id   = "ami-0e92438dc9afbbde5" #ubuntu-eks/k8s_1.32/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250430
+ami_type = "AL2_x86_64"
+
+custom_domain    = "kubesources.com"
+custom_subdomain = "ljcheng-capi"
+
+cluster_addons = {
+  coredns                = {}
+  eks-pod-identity-agent = {}
+  kube-proxy             = {}
+  vpc-cni                = {}
+}
 
 enable_cluster_creator_admin_permissions = false
 cluster_endpoint_public_access           = true
@@ -48,10 +63,4 @@ cluster_endpoint_public_access_cidrs = [
   "162.216.148.0/22",
 ]
 
-### You need to find an AMI that has kubelet installed, the default AWS AMI does not
-### Reference: https://stackoverflow.com/questions/64515585/aws-eks-nodegroup-create-failed-instances-failed-to-join-the-kubernetes-clust
-ami_id   = "ami-0e92438dc9afbbde5"
-ami_type = "AL2_x86_64"
 
-custom_domain    = "kubesources.com"
-custom_subdomain = "ljcheng"
