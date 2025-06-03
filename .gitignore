@@ -33,3 +33,8 @@ terraform.rc
 
 # files
 backend.tf
+
+kubectl
+clusterctl
+clusterawsadm
+eks.config

@@ -3,6 +3,19 @@ variable "default_region" {
   type        = string
   default     = "us-east-1"
 }
+variable "default_cloud_provider" {
+  type    = string
+  default = "aws"
+}
+variable "cloud_provider" {
+  type    = string
+  default = ""
+}
+variable "region" {
+  description = "AWS default region"
+  type        = string
+  default     = ""
+}
 
 # variable "tags" {
 #   description = "Required tags - used for billing metadata and cloud-related monitoring, automation"
@@ -264,55 +277,8 @@ variable "cluster_addons" {
   }
 }
 
-################################################################################
-# aws-auth ConfigMap
-################################################################################
 
-variable "create_aws_auth_configmap" {
-  description = "Determines whether to create the aws-auth configmap. NOTE - this is only intended for scenarios where the configmap does not exist (i.e. - when using only self-managed node groups). Most users should use `manage_aws_auth_configmap`"
-  type        = bool
-  default     = false
-}
 
-variable "manage_aws_auth_configmap" {
-  description = "Determines whether to manage the aws-auth configmap"
-  type        = bool
-  default     = false
-}
-
-variable "aws_auth_roles" {
-  description = "List of role maps to add to the aws-auth configmap"
-  type        = list(any)
-  default     = []
-}
-
-variable "aws_auth_users" {
-  description = "List of user maps to add to the aws-auth configmap"
-  type        = list(any)
-  default     = []
-}
-
-variable "aws_auth_accounts" {
-  description = "List of account maps to add to the aws-auth configmap"
-  type        = list(any)
-  default     = []
-}
-
-################################################################################
-# EKS Managed Node Group
-################################################################################
-
-variable "eks_managed_node_groups" {
-  description = "Map of EKS managed node group definitions to create"
-  type        = any
-  default     = {}
-}
-
-variable "eks_managed_node_group_defaults" {
-  description = "Map of EKS managed node group default configurations"
-  type        = any
-  default     = {}
-}
 
 
 ################################################################################
@@ -323,4 +289,16 @@ variable "cluster_security_group_additional_rules" {
   description = "List of additional security group rules to add to the cluster security group created. Set `source_node_security_group = true` inside rules to set the `node_security_group` as source"
   type        = any
   default     = {}
+}
+
+################################################################################
+# CAPI configuration
+################################################################################
+variable "clusterctl_version" {
+  type    = string
+  default = "v2.8.3"
+}
+variable "clusterawsadm_version" {
+  type    = string
+  default = "v2.8.3"
 }

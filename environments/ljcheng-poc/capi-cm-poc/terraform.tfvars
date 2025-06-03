@@ -2,6 +2,8 @@
 
 cluster_name    = "capi-cm-poc"
 cluster_version = "1.33"
+region          = ""
+cloud_provider  = "aws"
 
 ### You need to find an AMI that has kubelet installed, the default AWS AMI does not
 ### Reference: https://stackoverflow.com/questions/64515585/aws-eks-nodegroup-create-failed-instances-failed-to-join-the-kubernetes-clust
@@ -10,6 +12,9 @@ ami_type = "AL2_x86_64"
 
 custom_domain    = "kubesources.com"
 custom_subdomain = "ljcheng-capi"
+
+clusterctl_version    = "v1.10.2" #refer to https://github.com/kubernetes-sigs/cluster-api/releases
+clusterawsadm_version = "v2.8.3"  #refer to https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases
 
 cluster_addons = {
   coredns                = {}

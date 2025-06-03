@@ -1,4 +1,5 @@
 locals {
+  region = var.region == "" ? var.default_region : var.region
   ### VPN configuration
   vpc_upstream_name = var.vpc_upstream_name
   vpc_upstream_cidr = var.vpc_upstream_cidr
