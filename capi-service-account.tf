@@ -11,6 +11,19 @@ resource "aws_iam_role" "capa_cluster_service_account_role" {
           Service = "ec2.amazonaws.com"
         }
       },
+      {
+        Action = "sts:AssumeRoleWithWebIdentity",
+        Effect = "Allow",
+        Principal = {
+          Federated = module.bfe_cm.oidc_provider_arn
+        },
+        Condition = {
+          "StringLike" : {
+            "${module.eks_upstream.oidc_provider}:aud" : "sts.amazonaws.com",
+            "${module.eks_upstream.oidc_provider}:sub" : "system:serviceaccount:argocd:*"
+          }
+        }
+      }
     ]
   })
 
