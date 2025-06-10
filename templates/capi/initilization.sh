@@ -53,16 +53,6 @@ download_file_based_checkOS() {
   esac
 }
  
-assumeRoleFunction() {
-  export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
-  $(aws sts assume-role \
-  --role-arn ${assume_role_arn} \
-  --role-session-name "gitlab-runner-session" \
-  --duration-seconds 900 \
-  --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
-  --output text))
-}
- 
 generateEKSConfig() {
   cat << EOF > $EKS_CONFIG_LOCATION
 ---
@@ -74,6 +64,7 @@ spec:
     enable: true
   eventBridge:
     enable: true
+  allowAssumeRole: true
   eks:
     disable: false
     defaultControlPlaneRole:
@@ -88,9 +79,8 @@ EOF
  
 
 initializaCAPI() {
-  ./clusterawsadm bootstrap iam create-cloudformation-stack --config $EKS_CONFIG_LOCATION --region ${region} #For some reason, region variable cannot be passed, so hard-coded it
+  ./clusterawsadm bootstrap iam create-cloudformation-stack --config $EKS_CONFIG_LOCATION --region ${region}
   export AWS_B64ENCODED_CREDENTIALS="$(./clusterawsadm bootstrap credentials encode-as-profile --region ${region})"
-  #For some reason, region variable cannot be passed, so hard-coded it
   aws eks update-kubeconfig --name ${cluster_name} --region ${region}
   ./clusterctl init --infrastructure ${cloud_provider} || true
  
@@ -118,6 +108,14 @@ cleanup() {
   fi
 }
 
+output_variables() {
+  echo "***************************************************"
+  echo "cluster_name - ${cluster_name}"
+  echo "region - ${region}"
+  echo "clusterctl_version - ${clusterctl_version}"
+  echo "clusterawsadm_version - ${clusterawsadm_version}"
+  echo "***************************************************"
+}
 
 
 
@@ -136,7 +134,8 @@ export CLUSTER_AWS_ADM="clusterawsadm"
  
 
 download_file_based_checkOS $OSTYPE
-assumeRoleFunction
+# assumeRoleFunction
 generateEKSConfig
 initializaCAPI
 cleanup
+output_variables

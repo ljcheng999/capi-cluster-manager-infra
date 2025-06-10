@@ -148,6 +148,21 @@ locals {
         }
       }
     }
+    # subadmin_user = {
+    #   principal_arn     = var.cluster_admin_user_arn # Local test only
+    #   user_name         = "sso-admin"
+    #   kubernetes_groups = ["sso-admin-group"]
+
+    #   policy_associations = {
+    #     sso_subadmin_policy = {
+    #       policy_arn = var.aws_eks_cluster_admin_policy
+    #       access_scope = {
+    #         namespaces = []
+    #         type       = "cluster"
+    #       }
+    #     }
+    #   }
+    # }
   } : var.default_access_entries
 
   ### Shared data

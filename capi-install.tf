@@ -8,13 +8,14 @@ resource "null_resource" "name" {
       cloud_provider        = var.cloud_provider == "" ? var.default_cloud_provider : var.cloud_provider,
       linux_arch_amd64      = "amd64",
       linux_arch_arm64      = "arm64",
-      assume_role_arn       = var.cluster_admin_role_arn,
+      # assume_role_arn       = var.cluster_admin_role_arn, # for CAPI, the user for the management cluster needs to have admin access
+      # assume_role_arn = var.cluster_admin_user_arn,
     })
     interpreter = ["bash", "-c"]
   }
 
   triggers = {
-    # always_run = "${timestamp()}" # Only for testing
+    always_run            = "${timestamp()}" # Only for testing
     clusterctl_version    = var.clusterctl_version,
     clusterawsadm_version = var.clusterawsadm_version
   }
