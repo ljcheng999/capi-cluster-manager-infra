@@ -2,7 +2,7 @@
 resource "aws_iam_policy" "amazon_eks_ingress_alb_policy" {
   name        = "${var.cluster_name}-${var.capi_ingress_elb_policy_name}"
   description = "Policy for ${var.cluster_name} CAPI Cluster ELB policy"
-  policy      = file("${path.module}/templates/aws/alb-iam-policy.json")
+  policy      = file("${path.module}/templates/aws/capa-alb-iam-policy.json")
 
   tags = merge(
     {
