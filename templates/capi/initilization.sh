@@ -74,6 +74,25 @@ spec:
     managedMachinePool:
       disable: false
     iamRoleCreation: false # Set to true if you plan to use the EKSEnableIAM feature flag to enable automatic creation of IAM roles
+  clusterAPIControllers: # This is the section that really matter
+    disabled: false
+    extraStatements:
+    - Action:
+      - "sts:AssumeRole"
+      Effect: "Allow"
+      Resource: ["arn:aws:iam::${aws_managed_account_id}:role/controllers.cluster-api-provider-aws.sigs.k8s.io"]
+    trustStatements:
+    - Action:
+      - "sts:AssumeRoleWithWebIdentity"
+      Effect: "Allow"
+      Principal:
+        Federated:
+        - "${cluster_federate_arn}"
+      Condition:
+        "ForAnyValue:StringEquals":
+          "${cluster_oidc_provider}:sub":
+            - system:serviceaccount:capi-providers:capa-controller-manager
+            - system:serviceaccount:capa-eks-control-plane-system:capa-eks-control-plane-controller-manager # Include if also using EKS
 EOF
 }
  
@@ -134,7 +153,6 @@ export CLUSTER_AWS_ADM="clusterawsadm"
  
 
 download_file_based_checkOS $OSTYPE
-# assumeRoleFunction
 generateEKSConfig
 initializaCAPI
 cleanup

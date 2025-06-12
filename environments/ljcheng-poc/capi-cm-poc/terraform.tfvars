@@ -5,6 +5,8 @@ cluster_version = "1.33"
 region          = ""
 cloud_provider  = "aws"
 
+aws_managed_account_id = "1234567" # REPLACE THIS TO YOUR DOWNSTREAM AWS ACCOUNT
+
 ### You need to find an AMI that has kubelet installed, the default AWS AMI does not
 ### Reference: https://stackoverflow.com/questions/64515585/aws-eks-nodegroup-create-failed-instances-failed-to-join-the-kubernetes-clust
 ami_id   = "ami-0e92438dc9afbbde5" #ubuntu-eks/k8s_1.32/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250430

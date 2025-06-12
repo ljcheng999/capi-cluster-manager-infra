@@ -37,6 +37,15 @@ variable "region" {
 #   }
 # }
 
+variable "aws_managed_account_id" {
+  type    = string
+  default = ""
+}
+variable "default_aws_capi_managed_account" {
+  type    = string
+  default = "012345678912"
+}
+
 ################################################################################
 # VPC module variables
 ################################################################################
