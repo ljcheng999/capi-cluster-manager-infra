@@ -12,6 +12,17 @@ aws_managed_account_id = "1234567" # REPLACE THIS TO YOUR DOWNSTREAM AWS ACCOUNT
 ami_id   = "ami-0e92438dc9afbbde5" #ubuntu-eks/k8s_1.32/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20250430
 ami_type = "AL2_x86_64"
 
+node_security_group_additional_rules = {
+  ingress_self_all = {
+    description = "Node to itself"
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    type        = "ingress"
+    self        = true
+  }
+}
+
 custom_domain    = "kubesources.com"
 custom_subdomain = "ljcheng-capi"
 

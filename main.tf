@@ -27,6 +27,7 @@ module "eks_upstream" {
   cluster_endpoint_public_access_cidrs = flatten(["${var.my_ip}", var.cluster_endpoint_public_access_cidrs])
   control_plane_subnet_ids             = module.eks_upstream_vpc.private_subnets
 
+  node_security_group_additional_rules = var.node_security_group_additional_rules
 
   iam_role_additional_policies = local.cluster_iam_role_additional_policies
   self_managed_node_groups     = local.self_managed_node_groups
